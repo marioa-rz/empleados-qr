@@ -13,6 +13,7 @@ export const viewEmpleadoCard = async (req, res) => {
     const { publicId } = req.params;
     const emp = await findEmpleadoByPublicId(publicId);
 
+    // Si no existe el empleado, mostramos error simple
     if (!emp) {
       return res.status(404).send(`
         <!doctype html>
@@ -30,6 +31,7 @@ export const viewEmpleadoCard = async (req, res) => {
       `);
     }
 
+    // Preparar datos
     const name = escapeHtml(emp.name || "—");
     const surname = escapeHtml(emp.surname || "—");
     const statusRaw = String(emp.status || "—");
@@ -40,7 +42,7 @@ export const viewEmpleadoCard = async (req, res) => {
 
     const isActive = statusRaw.toLowerCase() === "activo";
 
-    // Logo fijo (como en tu screenshot)
+    // Logo (URL proporcionada en tu código)
     const LOGO_URL =
       "https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png";
 
@@ -52,237 +54,238 @@ export const viewEmpleadoCard = async (req, res) => {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>${name} ${surname} — Verificación</title>
         <style>
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
           :root{
-            --bg: #f6f7fb;
-            --card: #ffffff;
-            --shadow: 0 18px 55px rgba(0,0,0,.12);
-            --radius: clamp(18px, 3vw, 26px);
-
-            --maxw: 1100px;
-            --pad: clamp(16px, 3vw, 28px);
-
-            --title: clamp(26px, 3.6vw, 44px);
-            --name: clamp(28px, 4vw, 48px);
-            --text: clamp(14px, 2vw, 18px);
-            --small: clamp(12px, 1.7vw, 14px);
-
-            --blue: #1f3b7a;
-            --pillBg: #eaf4ff;
-            --pillText: #1b5ea7;
+            /* Colores extraídos de la imagen */
+            --bg-page: #f4f6f9;
+            --bg-card: #ffffff;
+            --zoomsa-blue: #1b3a75; /* Azul oscuro del logo/título */
+            --pill-bg: #ebf5ff;     /* Fondo azul muy claro */
+            --pill-text: #2581c4;   /* Texto azul celeste */
+            --gray-box: #f8f9fa;    /* Fondo gris del estado */
+            --text-main: #111827;
+            
+            --shadow: 0 20px 60px -10px rgba(0,0,0,0.1);
+            --radius-card: 24px;
+            --radius-img: 16px;
           }
 
           *{ box-sizing:border-box; }
+          
           body{
             margin:0;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-            background: var(--bg);
-            color:#0f172a;
+            font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
           }
 
-          .page{
-            max-width: var(--maxw);
-            margin: 0 auto;
-            padding: clamp(18px, 3.2vw, 36px);
-          }
-
-          /* LOGO ARRIBA, GRANDE */
-          .brandTop{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            padding: clamp(10px, 2vw, 18px) 0 clamp(18px, 3vw, 28px);
-          }
-          .brandTop img{
-            width: clamp(220px, 42vw, 520px);
-            height:auto;
-            object-fit:contain;
-          }
-
-          /* CARD PRINCIPAL */
-          .card{
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: clamp(20px, 3vw, 34px);
-          }
-
-          .cardTitle{
-            text-align:center;
-            font-size: var(--title);
-            font-weight: 800;
-            color: var(--blue);
-            margin: 0 0 clamp(18px, 3vw, 28px);
-            letter-spacing: -0.02em;
-          }
-
-          /* CUERPO: foto izquierda + info derecha */
-          .body{
-            display:grid;
-            grid-template-columns: 260px 1fr;
-            gap: clamp(18px, 3vw, 34px);
-            align-items:center;
-          }
-
-          .photo{
+          .page-container{
             width: 100%;
-            max-width: 260px;
-            aspect-ratio: 1 / 1;
-            border-radius: clamp(18px, 2.5vw, 26px);
-            overflow:hidden;
-            background:#e9edf3;
-          }
-          .photo img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            display:block;
-          }
-          .photoFallback{
-            width:100%;
-            height:100%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size: clamp(40px, 6vw, 64px);
-            font-weight: 900;
-            color:#64748b;
+            max-width: 900px;
+            padding: 20px;
+            margin: 0 auto;
           }
 
-          .info{
-            min-width: 0;
+          /* HEADER CON LOGO */
+          .header{
+            text-align: center;
+            padding-bottom: 30px;
+            padding-top: 20px;
+          }
+          .header img{
+            height: 60px; /* Ajusta según necesidad */
+            width: auto;
+            object-fit: contain;
           }
 
-          .empName{
-            font-size: var(--name);
-            font-weight: 900;
-            margin: 0 0 14px;
-            letter-spacing: -0.03em;
-            line-height: 1.05;
-            word-break: break-word;
+          /* TARJETA PRINCIPAL */
+          .card{
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            width: 100%;
           }
 
-          .pills{
-            display:flex;
-            flex-wrap:wrap;
-            gap: 14px;
-            margin-bottom: 14px;
-          }
-
-          .pill{
-            background: var(--pillBg);
-            color: var(--pillText);
-            padding: 12px 18px;
-            border-radius: 999px;
-            font-size: clamp(14px, 1.8vw, 18px);
+          .card-title{
+            text-align: center;
+            font-size: 26px;
             font-weight: 700;
-            display:inline-flex;
-            align-items:center;
-            gap: 10px;
-            max-width: 100%;
-            word-break: break-word;
+            color: var(--zoomsa-blue);
+            margin: 0 0 35px 0;
           }
 
-          /* Estado como tarjetita pequeña */
-          .statusBox{
-            width: fit-content;
-            background: #f7f9fc;
-            border-radius: 14px;
-            padding: 12px 16px;
+          /* GRID DE CONTENIDO (FOTO IZQ - INFO DER) */
+          .content-grid{
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 40px;
+            align-items: center;
           }
-          .statusLabel{
-            font-size: var(--small);
-            color:#6b7280;
-            margin-bottom: 6px;
+
+          /* FOTO */
+          .photo-container{
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: var(--radius-img);
+            overflow: hidden;
+            background: #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
           }
-          .statusRow{
-            display:inline-flex;
-            align-items:center;
+          .photo-container img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+          .photo-fallback{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #94a3b8;
+            font-weight: bold;
+          }
+
+          /* INFORMACIÓN */
+          .info-col{
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+          }
+
+          .employee-name{
+            font-size: 36px;
+            font-weight: 800; /* Extra bold como en la imagen */
+            color: #000;
+            margin: 0;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+          }
+
+          /* PILLS (ID, TEL, DPI) */
+          .pills-row{
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
-            font-size: clamp(14px, 1.9vw, 18px);
+          }
+          .pill{
+            background-color: var(--pill-bg);
+            color: var(--pill-text);
+            font-weight: 600;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 999px; /* Forma de cápsula */
+            white-space: nowrap;
+          }
+
+          /* CAJA DE ESTADO */
+          .status-box{
+            background-color: var(--gray-box);
+            border-radius: 12px;
+            padding: 10px 16px;
+            width: fit-content;
+            margin-top: 5px;
+          }
+          .status-label{
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+            font-weight: 500;
+          }
+          .status-value{
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-weight: 800;
-            color:#0f172a;
+            font-size: 16px;
+            color: #0f172a;
           }
           .dot{
-            width: 12px;
-            height: 12px;
-            border-radius: 999px;
-            background: ${isActive ? "#16a34a" : "#f59e0b"};
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: ${isActive ? "#16a34a" : "#ca8a04"};
           }
 
-          .footer{
-            text-align:center;
-            color:#94a3b8;
-            font-size: clamp(12px, 1.6vw, 14px);
-            margin-top: clamp(18px, 3vw, 26px);
-          }
-
-          /* RESPONSIVE: en móvil se apila */
-          @media (max-width: 820px){
-            .body{
+          /* RESPONSIVE */
+          @media (max-width: 700px) {
+            .card{ padding: 24px; }
+            .content-grid{
               grid-template-columns: 1fr;
-              justify-items: center;
               text-align: center;
+              gap: 24px;
             }
-            .photo{ max-width: 320px; }
-            .pills{ justify-content: center; }
-            .statusBox{ margin: 0 auto; }
-          }
-
-          @media (max-width: 420px){
-            .pill{
-              width: 100%;
+            .photo-container{
+              width: 200px;
+              margin: 0 auto;
+            }
+            .pills-row{
               justify-content: center;
-              padding: 12px 14px;
+            }
+            .status-box{
+              margin: 5px auto 0;
+            }
+            .employee-name{
+              font-size: 28px;
             }
           }
         </style>
       </head>
       <body>
-        <div class="page">
 
-          <div class="brandTop">
-            <img src="${LOGO_URL}" alt="ZOOMSA" />
+        <div class="page-container">
+          
+          <div class="header">
+            <img src="${LOGO_URL}" alt="ZOOMSA LABORATORIO" />
           </div>
 
           <div class="card">
-            <h2 class="cardTitle">Verificación de empleado</h2>
+            <h1 class="card-title">Verificación de empleado</h1>
 
-            <div class="body">
-              <div class="photo">
+            <div class="content-grid">
+              <div class="photo-container">
                 ${
                   photoUrl
-                    ? `<img src="${photoUrl}" alt="${name} ${surname}" loading="lazy" referrerpolicy="no-referrer" />`
-                    : `<div class="photoFallback">${name.charAt(0) || "—"}${surname.charAt(0) || ""}</div>`
+                    ? `<img src="${photoUrl}" alt="Foto de ${name}" />`
+                    : `<div class="photo-fallback">${name.charAt(0)}</div>`
                 }
               </div>
 
-              <div class="info">
-                <h1 class="empName">${name} ${surname}</h1>
+              <div class="info-col">
+                <h2 class="employee-name">${name} ${surname}</h2>
 
-                <div class="pills">
+                <div class="pills-row">
                   <span class="pill">ID: ${escapeHtml(publicId)}</span>
                   <span class="pill">Tel: ${phone}</span>
                   <span class="pill">DPI: ${dpi}</span>
                 </div>
 
-                <div class="statusBox">
-                  <div class="statusLabel">Estado</div>
-                  <div class="statusRow">
+                <div class="status-box">
+                  <div class="status-label">Estado</div>
+                  <div class="status-value">
                     <span class="dot"></span>
-                    <span>${status}</span>
+                    ${status}
                   </div>
                 </div>
               </div>
             </div>
-
-            <div class="footer">Verificación de empleado</div>
+            
           </div>
-
         </div>
+
       </body>
       </html>
     `);
   } catch (err) {
-    return res.status(500).send("Error al mostrar el empleado.");
+    console.error(err);
+    return res.status(500).send("Error interno del servidor.");
   }
 };
