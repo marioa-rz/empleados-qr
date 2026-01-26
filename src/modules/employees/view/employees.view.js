@@ -37,7 +37,12 @@ export const viewEmpleadoCard = async (req, res) => {
     const photoUrl = String(emp.photoUrl || "").trim();
     const dpi = escapeHtml(emp.dpi || "—");
     const phone = escapeHtml(emp.phone || "—");
+
     const isActive = statusRaw.toLowerCase() === "activo";
+
+    // Logo fijo (como en tu screenshot)
+    const LOGO_URL =
+      "https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png";
 
     return res.status(200).send(`
       <!doctype html>
@@ -45,185 +50,232 @@ export const viewEmpleadoCard = async (req, res) => {
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>${name} ${surname} — Empleado</title>
-
+        <title>${name} ${surname} — Verificación</title>
         <style>
           :root{
-            --bg:#f6f7fb;
-            --card:#fff;
-            --shadow:0 16px 45px rgba(0,0,0,.10);
-            --radius:22px;
+            --bg: #f6f7fb;
+            --card: #ffffff;
+            --shadow: 0 18px 55px rgba(0,0,0,.12);
+            --radius: clamp(18px, 3vw, 26px);
 
-            --pad:clamp(16px,4vw,28px);
-            --maxw:720px;
+            --maxw: 1100px;
+            --pad: clamp(16px, 3vw, 28px);
 
-            --h1:clamp(22px,5vw,32px);
-            --text:clamp(14px,3.2vw,18px);
-            --small:clamp(12px,2.8vw,14px);
+            --title: clamp(26px, 3.6vw, 44px);
+            --name: clamp(28px, 4vw, 48px);
+            --text: clamp(14px, 2vw, 18px);
+            --small: clamp(12px, 1.7vw, 14px);
+
+            --blue: #1f3b7a;
+            --pillBg: #eaf4ff;
+            --pillText: #1b5ea7;
           }
 
-          *{box-sizing:border-box}
+          *{ box-sizing:border-box; }
           body{
             margin:0;
-            font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-            background:var(--bg);
-            color:#111;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            background: var(--bg);
+            color:#0f172a;
           }
 
-          .wrap{
-            max-width:var(--maxw);
-            margin:0 auto;
-            padding:var(--pad);
+          .page{
+            max-width: var(--maxw);
+            margin: 0 auto;
+            padding: clamp(18px, 3.2vw, 36px);
           }
 
+          /* LOGO ARRIBA, GRANDE */
+          .brandTop{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding: clamp(10px, 2vw, 18px) 0 clamp(18px, 3vw, 28px);
+          }
+          .brandTop img{
+            width: clamp(220px, 42vw, 520px);
+            height:auto;
+            object-fit:contain;
+          }
+
+          /* CARD PRINCIPAL */
           .card{
-            background:var(--card);
-            border-radius:var(--radius);
-            overflow:hidden;
-            box-shadow:var(--shadow);
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: clamp(20px, 3vw, 34px);
           }
 
-          /* FOTO FULL WIDTH */
-          .hero{
-            width:100%;
-            aspect-ratio:16/10;
+          .cardTitle{
+            text-align:center;
+            font-size: var(--title);
+            font-weight: 800;
+            color: var(--blue);
+            margin: 0 0 clamp(18px, 3vw, 28px);
+            letter-spacing: -0.02em;
+          }
+
+          /* CUERPO: foto izquierda + info derecha */
+          .body{
+            display:grid;
+            grid-template-columns: 260px 1fr;
+            gap: clamp(18px, 3vw, 34px);
+            align-items:center;
+          }
+
+          .photo{
+            width: 100%;
+            max-width: 260px;
+            aspect-ratio: 1 / 1;
+            border-radius: clamp(18px, 2.5vw, 26px);
+            overflow:hidden;
             background:#e9edf3;
           }
-          .hero img{
+          .photo img{
             width:100%;
             height:100%;
             object-fit:cover;
             display:block;
           }
-          .hero-fallback{
+          .photoFallback{
             width:100%;
             height:100%;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:clamp(36px,10vw,56px);
-            font-weight:800;
-            color:#667;
+            font-size: clamp(40px, 6vw, 64px);
+            font-weight: 900;
+            color:#64748b;
           }
 
-          .content{
-            padding:var(--pad);
+          .info{
+            min-width: 0;
           }
 
-          h1{
-            font-size:var(--h1);
-            margin:0 0 14px;
-            line-height:1.15;
+          .empName{
+            font-size: var(--name);
+            font-weight: 900;
+            margin: 0 0 14px;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            word-break: break-word;
           }
 
           .pills{
             display:flex;
             flex-wrap:wrap;
-            gap:10px;
+            gap: 14px;
+            margin-bottom: 14px;
           }
 
           .pill{
-            padding:10px 14px;
-            border-radius:999px;
-            background:#eef7ff;
-            color:#0b5cab;
-            font-size:var(--small);
-            font-weight:600;
-          }
-
-          .grid{
-            padding:0 var(--pad) var(--pad);
-          }
-
-          .item{
-            background:#f7f9fc;
-            border-radius:18px;
-            padding:16px;
-          }
-
-          .label{
-            font-size:var(--small);
-            color:#667;
-            margin-bottom:6px;
-          }
-
-          .status{
+            background: var(--pillBg);
+            color: var(--pillText);
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-size: clamp(14px, 1.8vw, 18px);
+            font-weight: 700;
             display:inline-flex;
             align-items:center;
-            gap:6px;
-            font-size:13px;
-            font-weight:600;
-            color:#334155;
+            gap: 10px;
+            max-width: 100%;
+            word-break: break-word;
           }
 
+          /* Estado como tarjetita pequeña */
+          .statusBox{
+            width: fit-content;
+            background: #f7f9fc;
+            border-radius: 14px;
+            padding: 12px 16px;
+          }
+          .statusLabel{
+            font-size: var(--small);
+            color:#6b7280;
+            margin-bottom: 6px;
+          }
+          .statusRow{
+            display:inline-flex;
+            align-items:center;
+            gap: 10px;
+            font-size: clamp(14px, 1.9vw, 18px);
+            font-weight: 800;
+            color:#0f172a;
+          }
           .dot{
-            width:8px;
-            height:8px;
-            border-radius:999px;
-            background:${isActive ? "#16a34a" : "#f59e0b"};
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: ${isActive ? "#16a34a" : "#f59e0b"};
           }
 
-          .foot{
+          .footer{
             text-align:center;
-            font-size:var(--small);
-            color:#7a8596;
-            padding-bottom:var(--pad);
+            color:#94a3b8;
+            font-size: clamp(12px, 1.6vw, 14px);
+            margin-top: clamp(18px, 3vw, 26px);
           }
 
-          /* LOGO ZOOMSA */
-          .brand{
-            display:flex;
-            justify-content:center;
-            margin-top:18px;
+          /* RESPONSIVE: en móvil se apila */
+          @media (max-width: 820px){
+            .body{
+              grid-template-columns: 1fr;
+              justify-items: center;
+              text-align: center;
+            }
+            .photo{ max-width: 320px; }
+            .pills{ justify-content: center; }
+            .statusBox{ margin: 0 auto; }
           }
-          .brand img{
-            width:clamp(140px,45vw,220px);
-            height:auto;
+
+          @media (max-width: 420px){
+            .pill{
+              width: 100%;
+              justify-content: center;
+              padding: 12px 14px;
+            }
           }
         </style>
       </head>
-
       <body>
-        <div class="wrap">
+        <div class="page">
+
+          <div class="brandTop">
+            <img src="${LOGO_URL}" alt="ZOOMSA" />
+          </div>
 
           <div class="card">
+            <h2 class="cardTitle">Verificación de empleado</h2>
 
-            <div class="hero">
-              ${
-                photoUrl
-                  ? `<img src="${photoUrl}" alt="${name} ${surname}" loading="lazy" />`
-                  : `<div class="hero-fallback">${name.charAt(0)}${surname.charAt(0)}</div>`
-              }
-            </div>
-
-            <div class="content">
-              <h1>${name} ${surname}</h1>
-
-              <div class="pills">
-                <span class="pill">ID: ${escapeHtml(publicId)}</span>
-                <span class="pill">Tel: ${phone}</span>
-                <span class="pill">DPI: ${dpi}</span>
+            <div class="body">
+              <div class="photo">
+                ${
+                  photoUrl
+                    ? `<img src="${photoUrl}" alt="${name} ${surname}" loading="lazy" referrerpolicy="no-referrer" />`
+                    : `<div class="photoFallback">${name.charAt(0) || "—"}${surname.charAt(0) || ""}</div>`
+                }
               </div>
-            </div>
 
-            <div class="grid">
-              <div class="item">
-                <div class="label">Estado</div>
-                <div class="status">
-                  <span class="dot"></span>
-                  ${status}
+              <div class="info">
+                <h1 class="empName">${name} ${surname}</h1>
+
+                <div class="pills">
+                  <span class="pill">ID: ${escapeHtml(publicId)}</span>
+                  <span class="pill">Tel: ${phone}</span>
+                  <span class="pill">DPI: ${dpi}</span>
+                </div>
+
+                <div class="statusBox">
+                  <div class="statusLabel">Estado</div>
+                  <div class="statusRow">
+                    <span class="dot"></span>
+                    <span>${status}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="foot">Verificación de empleado</div>
-          </div>
-
-          <div class="brand">
-            <img
-              src="https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png"
-              alt="ZOOMSA"
-            />
+            <div class="footer">Verificación de empleado</div>
           </div>
 
         </div>
