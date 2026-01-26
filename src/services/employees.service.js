@@ -34,7 +34,7 @@ export const createEmpleadoWithAssets = async (data) => {
   });
 
   // 3) URL pública del empleado (la vista)
-  const employeeUrl = `${BASE}/zoomsa/empleados/${publicId}`;
+  const employeeUrl = new URL(`/zoomsa/empleados/${publicId}`, BASE).toString();
 
   // 4) Generar + subir QR
   const qr = await uploadQrForPublicId(publicId, employeeUrl);
