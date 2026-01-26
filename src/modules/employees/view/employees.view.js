@@ -42,10 +42,6 @@ export const viewEmpleadoCard = async (req, res) => {
 
     const isActive = statusRaw.toLowerCase() === "activo";
 
-    // Logo (URL proporcionada en tu código)
-    const LOGO_URL =
-      "https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png";
-
     return res.status(200).send(`
       <!doctype html>
       <html lang="es">
@@ -244,7 +240,7 @@ export const viewEmpleadoCard = async (req, res) => {
         <div class="page-container">
           
           <div class="header">
-            <img src="${LOGO_URL}" alt="ZOOMSA LABORATORIO" />
+            <img src="https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png" alt="ZOOMSA LABORATORIO" />
           </div>
 
           <div class="card">
