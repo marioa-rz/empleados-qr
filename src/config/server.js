@@ -6,6 +6,7 @@ import { dbConnection } from "./mongo.js";
 
 // Importación de Módulos de Rutas
 import employeesRoutes from "../modules/employees/employees.routes.js";
+import employeesView from "../modules/employees/view/employees.view.routes.js";
 
 const middlewares = (app) => {
   app.use(express.json());
@@ -16,10 +17,30 @@ const middlewares = (app) => {
 const routes = (app) => {
   // Monta las rutas del módulo employees
   app.use("/zoomsa/v1/empleados", employeesRoutes);
+  app.use("/zoomsa/empleados", employeesView);
 };
 
 const notFound = (req, res) => {
-  res.status(404).json({
+  const wantsHtml = req.headers.accept?.includes("text/html");
+
+  if (wantsHtml) {
+    return res.status(404).send(`
+      <!doctype html>
+      <html lang="es">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>404</title>
+      </head>
+      <body style="font-family:system-ui; padding:24px;">
+        <h2>Ruta no encontrada</h2>
+        <p>${req.originalUrl}</p>
+      </body>
+      </html>
+    `);
+  }
+
+  return res.status(404).json({
     msg: "Ruta no encontrada",
     path: req.originalUrl,
   });

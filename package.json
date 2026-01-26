@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "qr": "node tools/generate-qr-from-db.js"
+    "qr": "node tools/generate-qr.js"
   },
   "keywords": [],
   "author": "Zoomsa",
