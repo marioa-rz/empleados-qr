@@ -1,29 +1,22 @@
 import Employee from "./employees.schema.js";
 
-export const findEmpleados = async () => {
-  const rows = await Employee.find().lean();
-  return rows;
-};
+export const findEmpleados = async () => Employee.find().lean();
 
-export const findEmpleadoByPublicId = async (publicId) => {
-  const row = await Employee.findOne({ publicId }).lean();
-  return row;
-};
+export const findEmpleadoByPublicId = async (publicId) =>
+  Employee.findOne({ publicId }).lean();
 
 export const createEmpleado = async (data) => {
-  const row = await Employee.create(data);
-  return row.toObject();
+  // Devuelve documento (no lean) para poder hacer save si hace falta
+  const doc = await Employee.create(data);
+  return doc;
 };
 
-export const updateEmpleadoByPublicId = async (publicId, data) => {
-  const row = await Employee.findOneAndUpdate(
+export const updateEmpleadoByPublicId = async (publicId, data) =>
+  Employee.findOneAndUpdate(
     { publicId },
     { $set: data },
     { new: true, runValidators: true },
   ).lean();
-
-  return row;
-};
 
 export const eliminateEmpleadoByPublicId = async (publicId) => {
   const result = await Employee.deleteOne({ publicId });

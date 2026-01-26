@@ -7,36 +7,35 @@ const FOLDER_QRS = "empleados/qrs";
 export const uploadPhotoFromUrl = async (publicId, photoUrl) => {
   const result = await cloudinary.uploader.upload(photoUrl, {
     folder: FOLDER_FOTOS,
-    public_id: publicId, // queda como empleados/fotos/<publicId>
+    public_id: publicId,
     overwrite: true,
     resource_type: "image",
   });
 
   return {
     photoUrl: result.secure_url,
-    photoPublicId: result.public_id,
+    photoPublicId: result.public_id, // empleados/fotos/<publicId>
   };
 };
 
 export const uploadQrForPublicId = async (publicId, url) => {
   const buffer = await QRCode.toBuffer(url, {
     errorCorrectionLevel: "Q",
-    width: 800,
+    width: 900,
     margin: 2,
   });
 
-  const b64 = buffer.toString("base64");
-  const dataUri = `data:image/png;base64,${b64}`;
+  const dataUri = `data:image/png;base64,${buffer.toString("base64")}`;
 
   const result = await cloudinary.uploader.upload(dataUri, {
     folder: FOLDER_QRS,
-    public_id: publicId, // queda como empleados/qrs/<publicId>
+    public_id: publicId,
     overwrite: true,
     resource_type: "image",
   });
 
   return {
     qrUrl: result.secure_url,
-    qrPublicId: result.public_id,
+    qrPublicId: result.public_id, // empleados/qrs/<publicId>
   };
 };
