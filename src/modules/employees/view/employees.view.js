@@ -13,7 +13,6 @@ export const viewEmpleadoCard = async (req, res) => {
     const { publicId } = req.params;
     const emp = await findEmpleadoByPublicId(publicId);
 
-    // Si no existe el empleado, mostramos error simple
     if (!emp) {
       return res.status(404).send(`
         <!doctype html>
@@ -31,7 +30,6 @@ export const viewEmpleadoCard = async (req, res) => {
       `);
     }
 
-    // Preparar datos
     const name = escapeHtml(emp.name || "—");
     const surname = escapeHtml(emp.surname || "—");
     const statusRaw = String(emp.status || "—");
@@ -42,246 +40,225 @@ export const viewEmpleadoCard = async (req, res) => {
 
     const isActive = statusRaw.toLowerCase() === "activo";
 
+    // Logo de la empresa (se mantiene arriba fuera de la card si lo deseas, o se quita si no sale en tu diseño nuevo)
+    const LOGO_URL =
+      "https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png";
+
     return res.status(200).send(`
       <!doctype html>
       <html lang="es">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>${name} ${surname} — Verificación</title>
+        <title>${name} ${surname}</title>
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+          /* Importamos fuente limpia */
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
-          :root{
-            /* Colores extraídos de la imagen */
-            --bg-page: #f4f6f9;
+          :root {
+            --bg-body: #f3f4f6;
             --bg-card: #ffffff;
-            --zoomsa-blue: #1b3a75; /* Azul oscuro del logo/título */
-            --pill-bg: #ebf5ff;     /* Fondo azul muy claro */
-            --pill-text: #2581c4;   /* Texto azul celeste */
-            --gray-box: #f8f9fa;    /* Fondo gris del estado */
-            --text-main: #111827;
-            
-            --shadow: 0 20px 60px -10px rgba(0,0,0,0.1);
-            --radius-card: 24px;
-            --radius-img: 16px;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --bg-pill: #eef8ff;
+            --text-pill: #0369a1;
+            --bg-status: #f8fafc; /* Gris muy claro para la caja de estado */
+            --green-dot: #10b981;
+            --amber-dot: #f59e0b;
           }
 
-          *{ box-sizing:border-box; }
-          
-          body{
-            margin:0;
-            font-family: 'Roboto', system-ui, -apple-system, sans-serif;
-            background: var(--bg-page);
-            color: var(--text-main);
-            min-height: 100vh;
+          * { box-sizing: border-box; }
+
+          body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-body);
             display: flex;
             flex-direction: column;
             align-items: center;
-          }
-
-          .page-container{
-            width: 100%;
-            max-width: 900px;
+            min-height: 100vh;
             padding: 20px;
-            margin: 0 auto;
           }
 
-          /* HEADER CON LOGO */
-          .header{
-            text-align: center;
-            padding-bottom: 30px;
-            padding-top: 20px;
+          /* Logo superior fuera de la tarjeta */
+          .brand-header {
+            margin-bottom: 24px;
+            margin-top: 10px;
           }
-          .header img{
-            height: 60px; /* Ajusta según necesidad */
+          .brand-header img {
+            height: 50px;
             width: auto;
-            object-fit: contain;
           }
 
           /* TARJETA PRINCIPAL */
-          .card{
+          .card {
             background: var(--bg-card);
-            border-radius: var(--radius-card);
-            box-shadow: var(--shadow);
-            padding: 40px;
+            border-radius: 24px; /* Bordes muy redondeados como en la foto */
+            box-shadow: 0 10px 40px -5px rgba(0,0,0,0.08);
             width: 100%;
+            max-width: 800px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
           }
 
-          .card-title{
-            text-align: center;
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--zoomsa-blue);
-            margin: 0 0 35px 0;
-          }
-
-          /* GRID DE CONTENIDO (FOTO IZQ - INFO DER) */
-          .content-grid{
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 40px;
+          /* SECCIÓN SUPERIOR: FOTO Y DATOS */
+          .top-section {
+            display: flex;
+            gap: 32px;
             align-items: center;
           }
 
-          /* FOTO */
-          .photo-container{
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: var(--radius-img);
+          .photo-wrapper {
+            flex-shrink: 0;
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
             overflow: hidden;
-            background: #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: #e5e7eb;
           }
-          .photo-container img{
+          .photo-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
           }
-          .photo-fallback{
+          .photo-fallback {
             width: 100%;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            color: #94a3b8;
+            font-size: 4rem;
+            color: #9ca3af;
             font-weight: bold;
           }
 
-          /* INFORMACIÓN */
-          .info-col{
+          .info-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            justify-content: center;
           }
 
-          .employee-name{
-            font-size: 36px;
-            font-weight: 800; /* Extra bold como en la imagen */
-            color: #000;
-            margin: 0;
+          .emp-name {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0 0 16px 0;
             line-height: 1.1;
-            letter-spacing: -0.5px;
           }
 
-          /* PILLS (ID, TEL, DPI) */
-          .pills-row{
+          /* BURBUJAS DE DATOS (PILLS) */
+          .pills {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
           }
-          .pill{
-            background-color: var(--pill-bg);
-            color: var(--pill-text);
-            font-weight: 600;
-            font-size: 15px;
+          .pill {
+            background: var(--bg-pill);
+            color: var(--text-pill);
             padding: 8px 16px;
-            border-radius: 999px; /* Forma de cápsula */
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 600;
             white-space: nowrap;
           }
 
-          /* CAJA DE ESTADO */
-          .status-box{
-            background-color: var(--gray-box);
-            border-radius: 12px;
-            padding: 10px 16px;
-            width: fit-content;
-            margin-top: 5px;
+          /* SECCIÓN DE ESTADO (CAJA GRIS ANCHA) */
+          .status-container {
+            background-color: var(--bg-status);
+            border-radius: 16px;
+            padding: 24px 32px;
+            width: 100%;
           }
-          .status-label{
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 4px;
+          .status-label {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 8px;
             font-weight: 500;
           }
-          .status-value{
+          .status-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 18px;
             font-weight: 800;
-            font-size: 16px;
-            color: #0f172a;
+            color: var(--text-dark);
           }
-          .dot{
-            width: 10px;
-            height: 10px;
+          .dot {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            background-color: ${isActive ? "#16a34a" : "#ca8a04"};
+            background-color: ${isActive ? "var(--green-dot)" : "var(--amber-dot)"};
           }
 
-          /* RESPONSIVE */
-          @media (max-width: 700px) {
-            .card{ padding: 24px; }
-            .content-grid{
-              grid-template-columns: 1fr;
+          /* PIE DE PÁGINA (TEXTO GRIS ABAJO) */
+          .footer-text {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+          }
+
+          /* RESPONSIVE MÓVIL */
+          @media (max-width: 650px) {
+            .card { padding: 24px; }
+            .top-section {
+              flex-direction: column;
               text-align: center;
-              gap: 24px;
+              gap: 20px;
             }
-            .photo-container{
-              width: 200px;
-              margin: 0 auto;
-            }
-            .pills-row{
-              justify-content: center;
-            }
-            .status-box{
-              margin: 5px auto 0;
-            }
-            .employee-name{
-              font-size: 28px;
-            }
+            .info-wrapper { align-items: center; }
+            .pills { justify-content: center; }
+            .emp-name { font-size: 26px; }
+            .status-container { padding: 16px 20px; }
           }
         </style>
       </head>
       <body>
 
-        <div class="page-container">
+        <div class="brand-header">
+           <img src="${LOGO_URL}" alt="Zoomsa" />
+        </div>
+
+        <div class="card">
           
-          <div class="header">
-            <img src="https://res.cloudinary.com/dpiqbeatw/image/upload/v1769466074/ZOOMSA_FONDO_TRANSPARENTE_bs0s3y.png" alt="ZOOMSA LABORATORIO" />
-          </div>
+          <div class="top-section">
+            <div class="photo-wrapper">
+              ${
+                photoUrl
+                  ? `<img src="${photoUrl}" alt="${name}" />`
+                  : `<div class="photo-fallback">${name.charAt(0)}</div>`
+              }
+            </div>
 
-          <div class="card">
-            <h1 class="card-title">Verificación de empleado</h1>
-
-            <div class="content-grid">
-              <div class="photo-container">
-                ${
-                  photoUrl
-                    ? `<img src="${photoUrl}" alt="Foto de ${name}" />`
-                    : `<div class="photo-fallback">${name.charAt(0)}</div>`
-                }
-              </div>
-
-              <div class="info-col">
-                <h2 class="employee-name">${name} ${surname}</h2>
-
-                <div class="pills-row">
-                  <span class="pill">ID: ${escapeHtml(publicId)}</span>
-                  <span class="pill">Tel: ${phone}</span>
-                  <span class="pill">DPI: ${dpi}</span>
-                </div>
-
-                <div class="status-box">
-                  <div class="status-label">Estado</div>
-                  <div class="status-value">
-                    <span class="dot"></span>
-                    ${status}
-                  </div>
-                </div>
+            <div class="info-wrapper">
+              <h1 class="emp-name">${name} ${surname}</h1>
+              <div class="pills">
+                <span class="pill">ID: ${escapeHtml(publicId)}</span>
+                <span class="pill">Tel: ${phone}</span>
+                <span class="pill">DPI: ${dpi}</span>
               </div>
             </div>
-            
           </div>
+
+          <div class="status-container">
+            <div class="status-label">Estado</div>
+            <div class="status-row">
+              <span class="dot"></span>
+              <span>${status}</span>
+            </div>
+          </div>
+
+          <div class="footer-text">Verificación de empleado</div>
+
         </div>
 
       </body>
       </html>
     `);
   } catch (err) {
-    console.error(err);
-    return res.status(500).send("Error interno del servidor.");
+    return res.status(500).send("Error interno.");
   }
 };
