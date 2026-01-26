@@ -30,7 +30,7 @@ export const createEmpleadoWithAssets = async (data) => {
   });
 
   // 3) Generar QR con la URL pública del empleado
-  const employeeUrl = `${BASE}/${publicId}`;
+  const employeeUrl = `${BASE}/zoomsa/empleados/${publicId}`;
 
   // 4) Subir QR a Cloudinary
   const qr = await uploadQrForPublicId(publicId, employeeUrl);
