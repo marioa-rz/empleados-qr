@@ -2,12 +2,23 @@ import {
   createEmpleado,
   updateEmpleadoByPublicId,
 } from "../modules/employees/employees.repository.js";
+
 import {
   uploadPhotoFromUrl,
   uploadQrForPublicId,
 } from "../modules/employees/employees.cloudinary.js";
 
-const normalizeBaseUrl = (base) => String(base || "").replace(/\/+$/, "");
+const normalizeBaseUrl = (base) => {
+  let b = String(base || "").trim();
+
+  // quita / al final
+  b = b.replace(/\/+$/, "");
+
+  // si ya trae /zoomsa/empleados o /zoomsa/employees, lo removemos
+  b = b.replace(/\/zoomsa\/(empleados|employees)$/i, "");
+
+  return b;
+};
 
 const required = (value, field) => {
   const v = String(value ?? "").trim();
@@ -33,7 +44,7 @@ export const createEmpleadoWithAssets = async (data) => {
     photoPublicId: photo.photoPublicId,
   });
 
-  // 3) URL pública del empleado (la vista)
+  // 3) URL pública del empleado (la vista) - SIEMPRE queda bien
   const employeeUrl = new URL(`/zoomsa/empleados/${publicId}`, BASE).toString();
 
   // 4) Generar + subir QR
@@ -45,7 +56,6 @@ export const createEmpleadoWithAssets = async (data) => {
     qrPublicId: qr.qrPublicId,
   });
 
-  // Fallback por si la actualización fallara (muy raro)
   if (!updated) {
     return {
       ...createdDoc.toObject(),
