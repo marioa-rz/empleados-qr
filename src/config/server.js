@@ -66,6 +66,15 @@ export const initServer = async () => {
     // 2. Configuración de Middlewares
     middlewares(app);
 
+    // Ruta de Salud del Servicio, activa el servidor
+    app.get("/health", (req, res) => {
+      res.status(200).json({
+        ok: true,
+        service: "zoomsa-backend",
+        time: new Date().toISOString(),
+      });
+    });
+
     // 3. Definición de Rutas
     routes(app);
 
