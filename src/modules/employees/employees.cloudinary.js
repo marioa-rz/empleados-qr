@@ -23,6 +23,10 @@ export const uploadQrForPublicId = async (publicId, url) => {
     errorCorrectionLevel: "Q",
     width: 900,
     margin: 2,
+    color: {
+      dark: "#1e90ff", // color del QR
+      light: "#ffffff", // fondo
+    },
   });
 
   const dataUri = `data:image/png;base64,${buffer.toString("base64")}`;
@@ -31,6 +35,7 @@ export const uploadQrForPublicId = async (publicId, url) => {
     folder: FOLDER_QRS,
     public_id: publicId,
     overwrite: true,
+    invalidate: true,
     resource_type: "image",
   });
 
