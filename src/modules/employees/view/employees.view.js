@@ -151,7 +151,7 @@ export const viewEmpleadoCard = async (req, res) => {
               font-size: 32px;
               font-weight: 800;
               color: var(--text-blue);
-              margin: 0 0 16px 0;
+              margin: 20px 0 0 0;
               line-height: 1.1;
             }
 
