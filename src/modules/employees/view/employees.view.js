@@ -199,15 +199,6 @@ export const viewEmpleadoCard = async (req, res) => {
               background-color: ${isActive ? "var(--green-dot)" : "var(--amber-dot)"};
             }
 
-            /* PIE DE PÁGINA (TEXTO GRIS ABAJO) */
-            .footer-text {
-              text-align: center;
-              color: #9ca3af;
-              font-size: 14px;
-              font-weight: 500;
-              margin-top: 10px;
-            }
-
             /* RESPONSIVE MÓVIL */
             @media (max-width: 650px) {
               .card {
@@ -267,8 +258,6 @@ export const viewEmpleadoCard = async (req, res) => {
                 <span>${status}</span>
               </div>
             </div>
-
-            <div class="footer-text">Verificación de empleado</div>
           </div>
         </body>
       </html>
