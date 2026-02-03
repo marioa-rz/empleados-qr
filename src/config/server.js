@@ -16,8 +16,8 @@ const middlewares = (app) => {
 
 const routes = (app) => {
   // Monta las rutas del módulo employees
-  app.use("/zoomsa/v1/empleados", employeesRoutes);
-  app.use("/zoomsa/empleados", employeesView);
+  app.use("/administracion/v1/empleados", employeesRoutes);
+  app.use("/emp", employeesView);
 };
 
 const notFound = (req, res) => {
