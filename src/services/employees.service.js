@@ -14,8 +14,8 @@ const normalizeBaseUrl = (base) => {
   // quita / al final
   b = b.replace(/\/+$/, "");
 
-  // si ya trae /zoomsa/empleados o /zoomsa/employees, lo removemos
-  b = b.replace(/\/zoomsa\/(empleados|employees)$/i, "");
+  // si ya trae /emp se remueve
+  b = b.replace(/\/emp\/?$/i, "");
 
   return b;
 };
@@ -45,7 +45,7 @@ export const createEmpleadoWithAssets = async (data) => {
   });
 
   // 3) URL pública del empleado (la vista) - SIEMPRE queda bien
-  const employeeUrl = new URL(`/zoomsa/empleados/${publicId}`, BASE).toString();
+  const employeeUrl = new URL(`/emp/${publicId}`, BASE).toString();
 
   // 4) Generar + subir QR
   const qr = await uploadQrForPublicId(publicId, employeeUrl);

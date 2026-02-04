@@ -18,13 +18,13 @@ export const uploadPhotoFromUrl = async (publicId, photoUrl) => {
   };
 };
 
-export const uploadQrForPublicId = async (publicId, url) => {
+  export const uploadQrForPublicId = async (publicId, url) => {
   const buffer = await QRCode.toBuffer(url, {
     errorCorrectionLevel: "Q",
     width: 900,
     margin: 2,
     color: {
-      dark: "#1e90ff", // color del QR
+      dark: "#1F386C", // color del QR
       light: "#ffffff", // fondo
     },
   });
